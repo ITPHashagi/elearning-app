@@ -27,14 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Header />
-        <div className="absolute top-24">{children}</div>
-        <Footer />
+        <main className="min-h-screen flex flex-col justify-between">
+          <div className="container mx-auto px-4 py-8 mt-20">{children}</div>
+          <Footer />
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
       </body>
-
-      <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     </html>
   );
 }

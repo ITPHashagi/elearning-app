@@ -1,8 +1,10 @@
-"use-client";
+"use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 function Header() {
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   return (
     <div className="container mx-auto">
       <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 left-0 shadow-md">
