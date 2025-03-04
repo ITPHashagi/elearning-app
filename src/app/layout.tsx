@@ -34,6 +34,13 @@ export default function RootLayout({
           <div className="container mx-auto px-4 py-8 mt-20">{children}</div>
           <Footer />
         </main>
+        {/* <div id="fb-root"></div>
+        <script
+          async
+          defer
+          crossOrigin="anonymous"
+          src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v22.0"
+        ></script> */}
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
       </body>
     </html>
