@@ -3,6 +3,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import ReCAPTCHA from "react-google-recaptcha";
+import FacebookScript from "./FacebookScript";
 
 function Footer() {
   const onChange = (value: string | null) => {
@@ -10,7 +11,8 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-slate-900 rounded-lg shadow-sm dark:bg-gray-900  flex justify-center">
+    <footer className="bg-slate-900 rounded-lg shadow-sm dark:bg-gray-900  flex justify-center mt-5 w-full">
+      <FacebookScript />
       <div className="w-1/3 text-white mx-2 space-y-3">
         <div>
           <img
@@ -103,13 +105,13 @@ function Footer() {
           obcaecati quaerat impedit quis non expedita.
         </p>
       </div>
-      <div className="w-1/3 m-2">
-        {/* <div
+      <div className="w-1/3 m-2 flex justify-center">
+        <div
           className="fb-page"
           data-href="https://www.facebook.com/lophocviet"
           data-tabs="timeline"
-          data-width
-          data-height
+          data-width="340"
+          data-height="500"
           data-small-header="false"
           data-adapt-container-width="true"
           data-hide-cover="false"
@@ -123,7 +125,7 @@ function Footer() {
               CyberSoft - Đào Tạo Chuyên Gia Lập Trình
             </a>
           </blockquote>
-        </div> */}
+        </div>
       </div>
     </footer>
   );
