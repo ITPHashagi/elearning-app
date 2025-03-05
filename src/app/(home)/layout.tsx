@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,18 +27,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
-        <main className="min-h-screen flex flex-col justify-between">
-          <div className="container mx-auto px-4 py-8 mt-20">{children}</div>
-          <Footer />
-        </main>
-        {/* <div id="fb-root"></div>
-        <script
-          async
-          defer
-          crossOrigin="anonymous"
-          src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v22.0"
-        ></script> */}
+        <div className="container mx-auto">{children}</div>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
       </body>
     </html>
