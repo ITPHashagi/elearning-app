@@ -2,11 +2,17 @@
 import Link from "next/link";
 import React, { useState } from "react";
 
-function Header() {
+function Header({ onSearch }: { onSearch: any }) {
+  const [searchCourse, setSearchCourse] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleSearchChange = (e: any) => {
+    setSearchCourse(e.target.value);
+    onSearch(e.target.value);
   };
 
   return (
@@ -77,6 +83,8 @@ function Header() {
           <input
             type="text"
             placeholder="Tìm kiếm khóa học..."
+            value={searchCourse}
+            onChange={handleSearchChange}
             className="w-full max-w-2xl px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
           />
         </div>

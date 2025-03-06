@@ -1,52 +1,44 @@
 "use client";
 import { useState, useEffect } from "react";
-import api from "@/app/api";
+import { api } from "@/server/api/apiCourse";
 import CourseCard from "@/app/(home)/CourseCard";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-
-type CourseList = {
-  maKhoaHoc: number | string;
-  biDanh: string;
-  tenKhoaHoc: string;
-  moTa: string;
-  luotXem: string;
-  hinhAnh: string | null | undefined;
-  maNhom: "gp01";
-  ngayTao: string;
-  soLuongHocVien: number;
-  nguoiTao: {
-    taiKhoan: null;
-    hoTen: null;
-    maLoaiNguoiDung: null;
-    tenLoaiNguoiDung: null;
-  };
-  danhMucKhoaHoc: {
-    maDanhMucKhoahoc: string;
-    tenDanhMucKhoaHoc: string;
-  };
-};
+import Header from "./components/Header/header";
+import Footer from "./components/Footer/footer";
+import { CourseList } from "@/types/courseList";
 
 export default function Home() {
   const [course, setCourse] = useState<CourseList[]>([]);
-
-  const fetchCourse = async () => {
-    try {
-      const result = await api.get(
-        "/QuanLyKhoaHoc/LayDanhSachKhoaHoc?MaNhom=GP01"
-      );
-      setCourse(result.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [filteredCourses, setFilteredCourses] = useState<CourseList[]>([]);
 
   useEffect(() => {
-    fetchCourse();
+    const fetchCourses = async () => {
+      try {
+        const result = await api.get(
+          "/QuanLyKhoaHoc/LayDanhSachKhoaHoc?MaNhom=GP01"
+        );
+        setCourse(result.data);
+        setFilteredCourses(result.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCourses();
   }, []);
+
+  const handleSearchCourse = (searchTerm: string) => {
+    if (!searchTerm.trim()) {
+      setFilteredCourses(course);
+      return;
+    }
+    const filtered = course.filter((course) =>
+      course.tenKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCourses(filtered);
+  };
+
   return (
     <>
-      <Header />
+      <Header onSearch={handleSearchCourse} />
       <main className="flex-1 mt-[89px]">
         <div
           id="default-carousel"
@@ -187,7 +179,7 @@ export default function Home() {
 
         <h1 className="text-2xl font-bold my-4">Các khóa học mới nhất</h1>
         <div className="container ml-7 grid grid-cols-4 gap-4">
-          {course.map((courses) => (
+          {filteredCourses.map((courses) => (
             <CourseCard key={courses.maKhoaHoc} course={courses} />
           ))}
         </div>
