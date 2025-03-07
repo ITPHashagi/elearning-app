@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { api } from "@/server/api/apiCourse";
-import CourseCard from "@/app/(home)/CourseCard";
+import CourseCard from "@/app/(home)/CourseCard/cart";
 import Header from "./components/Header/header";
 import Footer from "./components/Footer/footer";
 import { CourseList } from "@/types/courseList";
@@ -178,7 +178,7 @@ export default function Home() {
         </div>
 
         <h1 className="text-2xl font-bold my-4">Các khóa học mới nhất</h1>
-        <div className="container ml-7 grid grid-cols-4 gap-4">
+        <div className="container mx-auto grid grid-cols-4 gap-4">
           {filteredCourses.map((courses) => (
             <CourseCard key={courses.maKhoaHoc} course={courses} />
           ))}

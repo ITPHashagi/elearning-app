@@ -39,7 +39,7 @@ export default function LoginPage() {
     setErrorMessage("");
     try {
       const result = await api.post("QuanLyNguoiDung/DangNhap", userLogin);
-      const userData = result.data.content;
+      const userData = result.data;
       console.log("Dữ liệu từ API:", userData); // Kiểm tra dữ liệu trả về
 
       localStorage.setItem("userInfor", JSON.stringify(userData));
@@ -169,7 +169,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap -mx-3 my-5">
+      <div className="flex flex-wrap my-5">
         <div className="w-full max-w-full sm:w-3/4 mx-auto text-center">
           <p className="text-sm text-slate-500 py-1">
             Tailwind CSS Component from{" "}
