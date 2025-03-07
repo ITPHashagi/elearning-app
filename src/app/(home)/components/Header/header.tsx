@@ -1,10 +1,44 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 function Header({ onSearch }: { onSearch: any }) {
   const [searchCourse, setSearchCourse] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const loadUser = () => {
+      const userData = localStorage.getItem("userInfor");
+      if (userData) {
+        try {
+          setUser(JSON.parse(userData)); // Lưu thông tin user vào state
+        } catch (error) {
+          console.error("Lỗi khi parse JSON:", error);
+          localStorage.removeItem("userInfor");
+        }
+      } else {
+        setUser(null);
+      }
+    };
+
+    loadUser();
+
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      window.removeEventListener("storage", loadUser);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfor");
+    setUser(null);
+    router.push("/");
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -89,22 +123,42 @@ function Header({ onSearch }: { onSearch: any }) {
           />
         </div>
 
-        {/* Nút Login */}
-        <div className="flex items-center space-x-2">
-          <Link
-            href="/login"
-            type="button"
-            className="px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900 transition duration-200"
-          >
-            Đăng nhập
-          </Link>
-          <button
-            type="button"
-            className="px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900 transition duration-200"
-          >
-            Đăng ký
-          </button>
-        </div>
+        {user ? (
+          <div className="flex items-center space-x-4">
+            <span className="text-gray-800 dark:text-white font-medium">
+              Xin chào, {user.taiKhoan}!
+            </span>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600 text-white font-medium text-sm rounded-lg hover:bg-red-700 transition duration-200"
+            >
+              Đăng xuất
+            </button>
+            <Link
+              href="/cart"
+              className="px-4 py-2 bg-green-600 text-white font-medium text-sm rounded-lg hover:bg-green-700 transition duration-200"
+            >
+              🛒 Giỏ hàng
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <Link
+              href="/login"
+              type="button"
+              className="px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900 transition duration-200"
+            >
+              Đăng nhập
+            </Link>
+            <Link
+              href="/register"
+              type="button"
+              className="px-5 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-900 transition duration-200"
+            >
+              Đăng ký
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );
