@@ -1,14 +1,21 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
+// Import FontAwesome
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserTie } from "@fortawesome/free-solid-svg-icons";
 
 function Header({ onSearch }: { onSearch: any }) {
   const [searchCourse, setSearchCourse] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadUser = () => {
@@ -25,12 +32,18 @@ function Header({ onSearch }: { onSearch: any }) {
       }
     };
 
-    loadUser();
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      setCartCount(cart.length);
+    };
 
-    window.addEventListener("storage", loadUser);
+    loadUser();
+    updateCartCount();
+
+    window.addEventListener("storage", updateCartCount);
 
     return () => {
-      window.removeEventListener("storage", loadUser);
+      window.removeEventListener("storage", updateCartCount);
     };
   }, []);
 
@@ -48,6 +61,22 @@ function Header({ onSearch }: { onSearch: any }) {
     setSearchCourse(e.target.value);
     onSearch(e.target.value);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 left-0 shadow-md">
@@ -123,23 +152,46 @@ function Header({ onSearch }: { onSearch: any }) {
           />
         </div>
 
+        {/* Hiển thị user và giỏ hàng */}
         {user ? (
-          <div className="flex items-center space-x-4">
-            <span className="text-gray-800 dark:text-white font-medium">
-              Xin chào, {user.taiKhoan}!
-            </span>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white font-medium text-sm rounded-lg hover:bg-red-700 transition duration-200"
-            >
-              Đăng xuất
-            </button>
+          <div className="flex items-center space-x-4 relative">
             <Link
               href="/cart"
-              className="px-4 py-2 bg-green-600 text-white font-medium text-sm rounded-lg hover:bg-green-700 transition duration-200"
+              className="px-4 mx-4 py-2 bg-green-600 text-white font-medium text-sm rounded-lg hover:bg-green-700 transition duration-200"
             >
               🛒 Giỏ hàng
+              {cartCount > 0 && <span className="pl-1">[{cartCount}]</span>}
             </Link>
+            <div className="relative" ref={userMenuRef}>
+              <button
+                className="text-gray-800 dark:text-white font-medium cursor-pointer px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              >
+                <FontAwesomeIcon
+                  icon={faUserTie}
+                  className="text-gray-800 dark:text-white text-xl mr-2"
+                />
+                Xin chào, {user.taiKhoan}
+              </button>
+
+              {/* Dropdown menu user */}
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg border rounded-lg p-2 z-50">
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 rounded-md transition duration-200"
+                  >
+                    Thông tin cá nhân
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 rounded-md transition duration-200"
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="flex items-center space-x-2">
