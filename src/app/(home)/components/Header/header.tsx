@@ -19,13 +19,13 @@ function Header({ onSearch }: { onSearch: any }) {
 
   useEffect(() => {
     const loadUser = () => {
-      const userData = localStorage.getItem("userInfor");
+      const userData = localStorage.getItem("userInfo");
       if (userData) {
         try {
           setUser(JSON.parse(userData)); // Lưu thông tin user vào state
         } catch (error) {
           console.error("Lỗi khi parse JSON:", error);
-          localStorage.removeItem("userInfor");
+          localStorage.removeItem("userInfo");
         }
       } else {
         setUser(null);
@@ -48,7 +48,7 @@ function Header({ onSearch }: { onSearch: any }) {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("userInfor");
+    localStorage.removeItem("userInfo");
     setUser(null);
     router.push("/");
   };
