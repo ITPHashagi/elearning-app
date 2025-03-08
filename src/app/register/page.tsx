@@ -1,5 +1,5 @@
 "use client";
-import { api } from "@/server/api/apiCourse";
+import { api } from "@/server/api/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -8,9 +8,11 @@ function Register() {
     taiKhoan: "string",
     matKhau: "string",
     hoTen: "string",
+    maLoaiNguoiDung: "HV",
     soDT: "string",
-    confirmPassword: "string",
+    maNhom: "GP01",
     email: "string",
+    confirmPassword: "string",
   });
 
   const router = useRouter();
@@ -18,13 +20,15 @@ function Register() {
   const [message, setMessage] = useState("");
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
     if (userRegister.matKhau != userRegister.confirmPassword) {
       setMessage("Password không khớp!");
       return;
     }
 
+    const { confirmPassword, ...userData } = userRegister;
     try {
-      const result = await api.post("/QuanLyNguoiDung/DangKy", userRegister);
+      const result = await api.post("/QuanLyNguoiDung/DangKy", userData);
       setMessage("Đăng ký thành công! Chuyển hướng đến trang đăng nhập...");
       console.log(result.data);
       // chuyển hướng trang
@@ -144,7 +148,7 @@ function Register() {
               Sign Up
             </button>
           </div>
-          {message && <p>{message}</p>}
+          {message && <p className="text-red-700">{message}</p>}
         </form>
       </div>
     </div>

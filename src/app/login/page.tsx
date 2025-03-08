@@ -1,10 +1,10 @@
 "use client";
-import { api } from "@/server/api/apiCourse";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/app/login/loginSlice";
+import { useSelector } from "react-redux";
+import { loginUser } from "@/app/login/loginSlice";
+import { RootState, useAppDispatch } from "@/app/store";
 
 export default function LoginPage() {
   const [userLogin, setUserLogin] = useState({
@@ -13,57 +13,35 @@ export default function LoginPage() {
   });
 
   const router = useRouter();
-  const dispatch = useDispatch();
-
-  const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useAppDispatch();
+  const user = useSelector((state: RootState) => state.userLogin.data);
+  const loading = useSelector((state: RootState) => state.userLogin.loading);
+  const error = useSelector((state: RootState) => state.userLogin.error);
 
   useEffect(() => {
-    const saveUserData = localStorage.getItem("userInfo");
-
-    if (saveUserData) {
-      // Kiểm tra null trước khi parse
-      try {
-        const parsedUser = JSON.parse(saveUserData);
-        console.log("Dữ liệu từ localStorage:", parsedUser);
-
-        if (parsedUser) dispatch(setUser(parsedUser)); // Dispatch nếu có dữ liệu hợp lệ
-        router.push("/");
-      } catch (error) {
-        console.error("Lỗi khi parse JSON:", error);
-      }
+    if (user) {
+      router.push("/");
     }
   }, []);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");
+
     try {
-      const result = await api.post("QuanLyNguoiDung/DangNhap", userLogin);
-      const userData = result.data;
-      console.log("Dữ liệu từ API:", userData); // Kiểm tra dữ liệu trả về
-
-      localStorage.setItem("userInfor", JSON.stringify(userData));
-      console.log(
-        "Dữ liệu trong localStorage:",
-        localStorage.getItem("userInfor")
-      ); // Kiểm tra sau khi lưu
-
-      alert("Đăng nhập thành công");
+      await dispatch(loginUser(userLogin)).unwrap();
+      alert("Đăng nhập thành công!");
       router.push("/");
     } catch (error) {
-      setErrorMessage(
-        "Đăng nhập thất bại! Vui lòng kiểm tra lại tài khoản và mật khẩu."
-      );
-      console.error("Lỗi đăng nhập:", error); // Log lỗi nếu có
+      return error;
     }
   };
 
-  const handleOnChange = (e: any) => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUserLogin({
-      ...userLogin,
+    setUserLogin((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
   return (
     <div className="bg-white rounded-lg">
@@ -81,7 +59,6 @@ export default function LoginPage() {
                 <p className="mb-4 text-gray-700">
                   Enter your email and password
                 </p>
-                {errorMessage && <p className="text-red-500">{errorMessage}</p>}
                 <button className="flex items-center justify-center w-full py-4 mb-6 text-sm font-medium transition duration-300 rounded-2xl text-gray-900 bg-gray-300 hover:bg-gray-400 focus:ring-4 focus:ring-gray-300">
                   <img
                     className="h-5 mr-2"
@@ -124,7 +101,7 @@ export default function LoginPage() {
                   className="flex items-center w-full px-5 py-4 mb-5 mr-2 text-sm font-medium outline-none focus:bg-gray-400 placeholder:text-gray-700 bg-gray-200 text-dark-gray-900 rounded-2xl"
                 />
 
-                <div className="flex flex-row justify-between mb-8">
+                <div className="flex flex-row justify-between mb-4">
                   <label className="relative inline-flex items-center mr-3 cursor-pointer select-none">
                     <input
                       type="checkbox"
@@ -152,14 +129,16 @@ export default function LoginPage() {
                     Forget password?
                   </a>
                 </div>
+                {error && <p className="text-red-500 mb-4 mt-0">{error}</p>}
                 <button
                   type="submit"
                   className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 md:w-96 rounded-2xl hover:bg-purple-600 focus:ring-4 focus:ring-purple-100 bg-purple-500"
+                  disabled={loading}
                 >
-                  Sign In
+                  {loading ? "Signing In..." : "Sign In"}
                 </button>
                 <p className="text-sm leading-relaxed text-gray-900">
-                  Not registered yet?{" "}
+                  Not registered yet?
                   <Link href="/register" className="font-bold text-gray-700">
                     Create an Account
                   </Link>

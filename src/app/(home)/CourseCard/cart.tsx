@@ -19,7 +19,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const router = useRouter();
 
   const checkUserLogin = (action: string) => {
-    const userData = localStorage.getItem("userInfor");
+    const userData = localStorage.getItem("userInfo");
 
     if (!userData) {
       alert("Đăng nhập để tiếp tục!");
