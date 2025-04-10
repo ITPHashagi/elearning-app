@@ -49,7 +49,7 @@ const EditCourseModal: React.FC<EditCourseModalProps> = ({
       // Xử lý giá trị mã danh mục: ưu tiên course.maDanhMucKhoaHoc,
       // nếu không có thì lấy từ course.danhMucKhoaHoc.maDanhMuc, nếu vẫn không có thì mặc định "BackEnd"
       const maDanhMuc =
-        course.maDanhMucKhoaHoc ||
+        course.danhMucKhoaHoc.maDanhMucKhoahoc ||
         (course.danhMucKhoaHoc && course.danhMucKhoaHoc.maDanhMuc
           ? course.danhMucKhoaHoc.maDanhMuc
           : "BackEnd");
@@ -64,8 +64,7 @@ const EditCourseModal: React.FC<EditCourseModalProps> = ({
         maNhom: course.maNhom,
         ngayTao: course.ngayTao ? moment(course.ngayTao, "DD/MM/YYYY") : null,
         maDanhMucKhoaHoc: maDanhMuc,
-        taiKhoanNguoiTao:
-          course.taiKhoanNguoiTao || course.nguoiTao?.taiKhoan || "",
+        taiKhoanNguoiTao: course?.nguoiTao?.taiKhoan || "",
       });
 
       // Set file list mặc định cho hình ảnh nếu có

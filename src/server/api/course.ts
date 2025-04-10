@@ -50,8 +50,12 @@ export const addCourse = async (courseData: CourseData) => {
   return api.post("/ThemKhoaHoc", courseData);
 };
 
-export const updateCourse = async (courseData: CourseData) => {
-  return api.put("/CapNhatKhoaHoc", courseData);
+export const updateCourse = (data: FormData) => {
+  return axios.post("/QuanLyKhoaHoc/CapNhatKhoaHocUpload", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const uploadCourseImage = async (file: File, tenKhoaHoc: string) => {

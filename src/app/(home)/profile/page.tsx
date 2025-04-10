@@ -29,13 +29,13 @@ function Profile() {
             ...parsedData,
           }));
 
-          // Lấy danh sách khóa học đã đăng ký theo tài khoản
           const payments = localStorage.getItem(
             `thanhToan_${parsedData.taiKhoan}`
           );
           const courses = payments ? JSON.parse(payments) : [];
           setRegisteredCourses(courses);
         } catch (error: any) {
+          console.error("Lỗi parse userInfo:", error);
           localStorage.removeItem("userInfo");
         }
       }
@@ -50,26 +50,34 @@ function Profile() {
     }));
   };
 
+  const encryptPassword = (password: string) => {
+    if (typeof window !== "undefined") {
+      return CryptoJS.AES.encrypt(password, "secret_key").toString();
+    }
+    return password; // Trả về nguyên bản nếu không phải client
+  };
+
   const handleUpdate = async () => {
     try {
-      const hashedPassword = CryptoJS.AES.encrypt(
-        formData.matKhau,
-        "secret_key"
-      ).toString();
+      console.log("FormData before update:", formData);
+      const hashedPassword = formData.matKhau
+        ? encryptPassword(formData.matKhau)
+        : formData.matKhau;
+      console.log("Hashed Password:", hashedPassword);
+      const updatedFormData = { ...formData, matKhau: hashedPassword };
       const result = await api.put(
         "/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
-        formData
+        updatedFormData
       );
       if (result.data) {
         alert("Cập nhật thành công!");
-        const userInfo = { ...formData, matKhau: hashedPassword };
-        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        localStorage.setItem("userInfo", JSON.stringify(updatedFormData));
         router.push("/");
       } else {
         alert("Cập nhật thất bại!");
       }
     } catch (error) {
-      console.log("Lỗi cập nhật");
+      console.log("Lỗi cập nhật:", error);
       alert("Có lỗi xảy ra vui lòng thử lại");
     }
   };
@@ -77,13 +85,10 @@ function Profile() {
   const handleUnregister = (maKhoaHoc: string | number) => {
     if (typeof window !== "undefined") {
       try {
-        // Lọc danh sách khóa học để loại bỏ khóa học có maKhoaHoc tương ứng
         const updatedCourses = registeredCourses.filter(
           (course) => course.maKhoaHoc !== maKhoaHoc
         );
         setRegisteredCourses(updatedCourses);
-
-        // Cập nhật lại localStorage
         localStorage.setItem(
           `thanhToan_${formData.taiKhoan}`,
           JSON.stringify(updatedCourses)
@@ -178,3 +183,4 @@ function Profile() {
 }
 
 export default Profile;
+export const dynamic = "force-dynamic"; // Ngăn prerender

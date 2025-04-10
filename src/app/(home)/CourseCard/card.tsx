@@ -25,13 +25,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
     if (action === "order") {
       alert(`Bạn đã đặt hàng khóa học: ${course.tenKhoaHoc}`);
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       cart.push(course);
       localStorage.setItem("cart", JSON.stringify(cart));
       router.push("/cart");
       window.dispatchEvent(new Event("storage"));
     } else if (action === "cart") {
-      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       cart.push(course);
       localStorage.setItem("cart", JSON.stringify(cart));
 

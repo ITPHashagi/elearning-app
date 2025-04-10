@@ -53,7 +53,6 @@ const CourseTable: React.FC<CourseTableProps> = ({
       key: "hinhAnh",
       render: (src: string) =>
         src ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={src}
             alt="course-img"
