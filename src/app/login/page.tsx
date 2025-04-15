@@ -2,39 +2,51 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { loginUser } from "@/app/login/loginSlice";
-import { RootState, useAppDispatch } from "@/app/store";
+import { api } from "@/server/api/api";
 
 export default function LoginPage() {
   const [userLogin, setUserLogin] = useState({
     taiKhoan: "",
     matKhau: "",
   });
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const user = useSelector((state: RootState) => state.userLogin.data);
-  const loading = useSelector((state: RootState) => state.userLogin.loading);
-  const error = useSelector((state: RootState) => state.userLogin.error);
 
   useEffect(() => {
-    if (user) {
+    // Kiểm tra xem thông tin đăng nhập có trong localStorage không
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
       router.push("/");
     }
-  }, [user, router]); // Thêm user và router vào dependencies
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
-      await dispatch(loginUser(userLogin)).unwrap();
-      alert("Đăng nhập thành công!");
-      router.push("/");
-    } catch (err) {
-      // Xử lý lỗi an toàn hơn, giả sử error là chuỗi hoặc đối tượng
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.error("Đăng nhập thất bại:", errorMessage);
+      const response = await api.post("/QuanLyNguoiDung/DangNhap", userLogin);
+
+      if (response.data?.accessToken) {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        localStorage.setItem("userInfo", JSON.stringify(response.data));
+        alert("Đăng nhập thành công!");
+        router.push("/");
+      } else if (response.data?.message) {
+        setError(response.data.message);
+      } else {
+        setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
+      }
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ||
+          "Đã có lỗi xảy ra trong quá trình đăng nhập."
+      );
+      console.error("Đăng nhập thất bại:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,9 +144,7 @@ export default function LoginPage() {
                     Forget password?
                   </a>
                 </div>
-                {error && (
-                  <p className="text-red-500 mb-4 mt-0">{String(error)}</p>
-                )}
+                {error && <p className="text-red-500 mb-4 mt-0">{error}</p>}
                 <button
                   type="submit"
                   className="w-full px-6 py-5 mb-5 text-sm font-bold leading-none text-white transition duration-300 md:w-96 rounded-2xl hover:bg-purple-600 focus:ring-4 focus:ring-purple-100 bg-purple-500"
