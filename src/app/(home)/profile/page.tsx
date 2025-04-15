@@ -3,7 +3,6 @@ import { api } from "@/server/api/api";
 import { UserInfo } from "@/types/userInfo";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import CryptoJS from "crypto-js";
 
 function Profile() {
   const router = useRouter();
@@ -50,21 +49,19 @@ function Profile() {
     }));
   };
 
-  const encryptPassword = (password: string) => {
-    if (typeof window !== "undefined") {
-      return CryptoJS.AES.encrypt(password, "secret_key").toString();
-    }
-    return password; // Trả về nguyên bản nếu không phải client
-  };
+  // Loại bỏ hàm encryptPassword
+  // const encryptPassword = (password: string) => {
+  //   if (typeof window !== "undefined") {
+  //     return CryptoJS.AES.encrypt(password, "secret_key").toString();
+  //   }
+  //   return password; // Trả về nguyên bản nếu không phải client
+  // };
 
   const handleUpdate = async () => {
     try {
       console.log("FormData before update:", formData);
-      const hashedPassword = formData.matKhau
-        ? encryptPassword(formData.matKhau)
-        : formData.matKhau;
-      console.log("Hashed Password:", hashedPassword);
-      const updatedFormData = { ...formData, matKhau: hashedPassword };
+      // Không mã hóa mật khẩu ở client nữa
+      const updatedFormData = { ...formData };
       const result = await api.put(
         "/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
         updatedFormData
@@ -137,6 +134,16 @@ function Profile() {
             className="w-full p-2 border rounded-lg"
           />
         </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Mật khẩu</label>
+          <input
+            type="password"
+            name="matKhau"
+            value={formData.matKhau}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
         <button
           className="w-full p-2 bg-blue-500 text-white rounded-lg"
           onClick={handleUpdate}
@@ -183,4 +190,4 @@ function Profile() {
 }
 
 export default Profile;
-export const dynamic = "force-dynamic"; // Ngăn prerender
+export const dynamic = "force-dynamic";
