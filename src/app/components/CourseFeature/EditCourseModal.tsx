@@ -11,7 +11,7 @@ import {
   Button,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { updateCourse } from "@/server/api/course";
+import { updateCourse, uploadCourseImage } from "@/server/api/course";
 import { toast } from "react-toastify";
 import type { CourseList } from "@/types/courseList";
 import moment from "moment";
@@ -43,11 +43,9 @@ const EditCourseModal: React.FC<EditCourseModalProps> = ({
 
   useEffect(() => {
     if (course) {
-      // Kiểm tra thông tin course
       console.log("Course nhận được:", course);
 
-      // Xử lý giá trị mã danh mục: ưu tiên course.maDanhMucKhoaHoc,
-      // nếu không có thì lấy từ course.danhMucKhoaHoc.maDanhMuc, nếu vẫn không có thì mặc định "BackEnd"
+  
       const maDanhMuc =
         course.danhMucKhoaHoc.maDanhMucKhoahoc ||
         (course.danhMucKhoaHoc && course.danhMucKhoaHoc.maDanhMuc
@@ -67,7 +65,6 @@ const EditCourseModal: React.FC<EditCourseModalProps> = ({
         taiKhoanNguoiTao: course?.nguoiTao?.taiKhoan || "",
       });
 
-      // Set file list mặc định cho hình ảnh nếu có
       form.setFieldValue(
         "hinhAnh",
         course.hinhAnh
@@ -90,38 +87,44 @@ const EditCourseModal: React.FC<EditCourseModalProps> = ({
       if (values.ngayTao) {
         values.ngayTao = values.ngayTao.format("DD/MM/YYYY");
       }
-      // Tạo FormData để gửi dữ liệu update, bao gồm file nếu có thay đổi
-      const formData = new FormData();
-      formData.append("maKhoaHoc", values.maKhoaHoc);
-      formData.append("biDanh", values.biDanh);
-      formData.append("tenKhoaHoc", values.tenKhoaHoc);
-      formData.append("moTa", values.moTa);
-      formData.append("luotXem", values.luotXem.toString());
-      formData.append("danhGia", values.danhGia.toString());
-      formData.append("maNhom", values.maNhom);
-      formData.append("ngayTao", values.ngayTao);
-      formData.append("maDanhMucKhoaHoc", values.maDanhMucKhoaHoc);
-      formData.append("taiKhoanNguoiTao", values.taiKhoanNguoiTao);
 
-      // Nếu người dùng chọn file mới thì sẽ có originFileObj
+      let hinhAnhValue = "";
       if (
         values.hinhAnh &&
         Array.isArray(values.hinhAnh) &&
         values.hinhAnh.length > 0 &&
         values.hinhAnh[0].originFileObj
       ) {
-        formData.append("hinhAnh", values.hinhAnh[0].originFileObj);
+        const uploadResponse = await uploadCourseImage(
+          values.hinhAnh[0].originFileObj,
+          values.tenKhoaHoc
+        );
+        hinhAnhValue = uploadResponse.data;
       } else if (course && course.hinhAnh) {
-        // Nếu không có thay đổi, gửi luôn URL cũ
-        formData.append("hinhAnh", course.hinhAnh);
+        hinhAnhValue = course.hinhAnh;
       }
 
-      await updateCourse(formData);
+      const payload = {
+        maKhoaHoc: values.maKhoaHoc,
+        biDanh: values.biDanh,
+        tenKhoaHoc: values.tenKhoaHoc,
+        moTa: values.moTa,
+        luotXem: values.luotXem,
+        danhGia: values.danhGia,
+        hinhAnh: hinhAnhValue,
+        maNhom: values.maNhom,
+        ngayTao: values.ngayTao,
+        maDanhMucKhoaHoc: values.maDanhMucKhoaHoc,
+        taiKhoanNguoiTao: values.taiKhoanNguoiTao,
+      };
+
+      await updateCourse(payload);
       toast.success("Cập nhật khóa học thành công!");
       onUpdated();
       onCancel();
     } catch (error) {
       toast.error("Cập nhật khóa học thất bại!");
+      console.error(error);
     }
   };
 

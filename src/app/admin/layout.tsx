@@ -1,7 +1,7 @@
-import "../../app/global.css"; // Import global CSS
+import "../../app/global.css"; 
 import AdminLayoutClient from "./AdminLayoutClient";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import CSS cho toast
+import "react-toastify/dist/ReactToastify.css";
 import "@ant-design/v5-patch-for-react-19";
 
 export const metadata = {
@@ -15,10 +15,8 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body>
-        {/* Gọi đến component client */}
         <AdminLayoutClient>{children}</AdminLayoutClient>
 
-        {/* Thêm ToastContainer để hiển thị thông báo toast */}
         <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>

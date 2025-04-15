@@ -5,6 +5,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
+  UserAddOutlined, 
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { User } from "@/types/user";
@@ -12,9 +13,10 @@ import { formatText } from "@/app/utils/format";
 
 interface UserTableProps {
   users: User[];
-  loading: boolean; 
+  loading: boolean;
   onDelete: (taiKhoan: string) => void;
   onEdit: (taiKhoan: string) => void;
+  onGhiDanh?: (taiKhoan: string) => void; 
 }
 
 // Constants
@@ -28,6 +30,7 @@ export default function UserTable({
   loading,
   onDelete,
   onEdit,
+  onGhiDanh,
 }: UserTableProps) {
   const columns: ColumnsType<User> = [
     {
@@ -98,6 +101,16 @@ export default function UserTable({
             icon={<DeleteOutlined style={{ color: "#f5222d", fontSize: 18 }} />}
             onClick={() => onDelete(record.taiKhoan)}
           />
+          {record.maLoaiNguoiDung === "HV" &&
+            onGhiDanh && ( 
+              <Button
+                type="text"
+                icon={
+                  <UserAddOutlined style={{ color: "#4CAF50", fontSize: 18 }} />
+                }
+                onClick={() => onGhiDanh(record.taiKhoan)}
+              ></Button>
+            )}
         </Space>
       ),
     },

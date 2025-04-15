@@ -5,7 +5,7 @@ import { SearchOutlined } from "@ant-design/icons";
 
 interface SearchInputProps {
   onSearch: (value: string) => void;
-  delay?: number; // ms, mặc định 500
+  delay?: number; 
 }
 
 export default function SearchInput({

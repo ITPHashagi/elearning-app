@@ -63,7 +63,6 @@ export default function EditUserModal({
               name="taiKhoan"
               rules={[{ required: true, message: "Vui lòng nhập tài khoản!" }]}
             >
-              {/* Nếu muốn không cho chỉnh sửa tài khoản, set disabled */}
               <Input placeholder="Nhập tài khoản" disabled />
             </Form.Item>
           </Col>

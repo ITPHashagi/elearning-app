@@ -28,37 +28,31 @@ const AddCoursePage = () => {
   const [form] = Form.useForm();
   const router = useRouter();
 
-  // Xử lý submit form
   const onFinish = async (values: any) => {
     try {
-      // Lấy file ảnh từ Upload (AntD trả về mảng fileList)
       const file = values.hinhAnh?.[0]?.originFileObj;
       if (!file) {
         toast.error("Vui lòng chọn file ảnh!");
         return;
       }
 
-      // Tạo object JSON cho API Thêm khóa học
       const courseData = {
         maKhoaHoc: values.maKhoaHoc,
-        biDanh: values.biDanh, // nếu backend cần
+        biDanh: values.biDanh,
         tenKhoaHoc: values.tenKhoaHoc,
         moTa: values.moTa,
         luotXem: Number(values.luotXem) || 0,
         danhGia: Number(values.danhGia) || 0,
-        // Lưu lại tên file (VD: "avatar.jpg")
         hinhAnh: file.name,
         maNhom: values.maNhom,
-        // Chuyển ngày sang format "DD/MM/YYYY"
         ngayTao: values.ngayTao ? values.ngayTao.format("DD/MM/YYYY") : "",
         maDanhMucKhoaHoc: values.maDanhMucKhoaHoc,
         taiKhoanNguoiTao: values.taiKhoanNguoiTao,
+        nguoiTao: values.taiKhoanNguoiTao, 
       };
 
-      // 1) Gửi request thêm khóa học (dạng JSON)
       await addCourse(courseData);
 
-      // 2) Upload file ảnh (multipart/form-data)
       await uploadCourseImage(file, values.tenKhoaHoc);
 
       toast.success("Thêm khóa học thành công!");

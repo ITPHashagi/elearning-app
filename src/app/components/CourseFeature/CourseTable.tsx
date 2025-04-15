@@ -4,6 +4,7 @@ import { Table, Space, Button, Tooltip } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
+  UserAddOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
@@ -15,6 +16,7 @@ interface CourseTableProps {
   loading: boolean;
   onEdit: (maKhoaHoc: string | number) => void;
   onDelete: (maKhoaHoc: string | number) => void;
+  onManageEnrollment: (maKhoaHoc: string | number) => void;
 }
 
 const EMPTY_IMAGE = "Không có hình ảnh";
@@ -25,8 +27,8 @@ const CourseTable: React.FC<CourseTableProps> = ({
   loading,
   onEdit,
   onDelete,
+  onManageEnrollment,
 }) => {
-  // 🔍 Lọc bỏ các khóa học không có mã khóa học (null hoặc undefined hoặc rỗng)
   const filteredCourses = courses.filter(
     (course) =>
       course.maKhoaHoc !== null &&
@@ -105,6 +107,13 @@ const CourseTable: React.FC<CourseTableProps> = ({
             type="text"
             icon={<DeleteOutlined style={{ color: "#f5222d", fontSize: 18 }} />}
             onClick={() => onDelete(record.maKhoaHoc)}
+          />
+          <Button
+            type="text"
+            icon={
+              <UserAddOutlined style={{ color: "#4CAF50", fontSize: 18 }} />
+            }
+            onClick={() => onManageEnrollment(record.maKhoaHoc)}
           />
         </Space>
       ),

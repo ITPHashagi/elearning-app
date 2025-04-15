@@ -1,4 +1,4 @@
-import "../../app/global.css"; // Đường dẫn cần đúng với cấu trúc dự án
+import "../../app/global.css"; 
 
 export const metadata = {
   title: "Next.js",

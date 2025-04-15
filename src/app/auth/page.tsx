@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { login } from "@/server/api/auth";
 import { FaUser, FaLock } from "react-icons/fa";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { motion } from "framer-motion"; // Thư viện animation
+import { motion } from "framer-motion";
 
 export default function AuthPage() {
   const [username, setUsername] = useState("");
@@ -17,7 +17,7 @@ export default function AuthPage() {
     if (typeof window !== "undefined") {
       const role = localStorage.getItem("role");
       if (role === "GV") {
-        router.replace("/admin"); // Dùng replace thay vì push để tránh bị đẩy vào stack lịch sử
+        router.replace("/admin"); 
       }
     }
   }, [router]);
@@ -48,7 +48,6 @@ export default function AuthPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-gray-800 bg-opacity-90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-gray-700"
       >
-        {/* Tiêu đề với icon vui nhộn */}
         <motion.h2
           className="text-3xl font-bold text-center text-white mb-6 flex items-center justify-center gap-2"
           whileHover={{ scale: 1.1, rotate: 3 }}
@@ -61,7 +60,6 @@ export default function AuthPage() {
         )}
 
         <form onSubmit={handleLogin}>
-          {/* Tài khoản */}
           <div className="mb-4">
             <label className="block text-gray-300 font-semibold">
               Tài khoản
@@ -84,7 +82,6 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {/* Mật khẩu */}
           <div className="mb-4">
             <label className="block text-gray-300 font-semibold">
               Mật khẩu
@@ -115,7 +112,6 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {/* Nút đăng nhập */}
           <motion.button
             type="submit"
             className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 rounded-lg text-lg font-semibold hover:opacity-90 transition-all duration-200 shadow-md flex items-center justify-center gap-2"

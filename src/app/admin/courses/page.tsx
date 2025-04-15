@@ -9,8 +9,8 @@ import type { CourseList } from "@/types/courseList";
 import CourseTable from "@/app/components/CourseFeature/CourseTable";
 import CourseSearch from "@/app/components/CourseFeature/CourseSearch";
 import EditCourseModal from "@/app/components/CourseFeature/EditCourseModal";
+import UserEnrollmentModal from "@/app/components/CourseFeature/UserEnrollmentModal";
 
-// Hàm bỏ dấu, phục vụ tìm kiếm
 const removeDiacritics = (str: string) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
@@ -22,14 +22,16 @@ export default function CourseListPage() {
   const [searchText, setSearchText] = useState<string>("");
   const [selectedCourse, setSelectedCourse] = useState<CourseList | null>(null);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
+  const [isEnrollmentModalVisible, setEnrollmentModalVisible] = useState(false);
+  const [selectedCourseEnrollment, setSelectedCourseEnrollment] =
+    useState<string>("");
+
   const router = useRouter();
 
-  // Lấy danh sách khóa học khi mount
   useEffect(() => {
     fetchCourses();
   }, []);
 
-  // Gọi API lấy danh sách khóa học
   const fetchCourses = async () => {
     setLoading(true);
     try {
@@ -43,7 +45,6 @@ export default function CourseListPage() {
     setLoading(false);
   };
 
-  // Xóa khóa học
   const handleDelete = async (maKhoaHoc: string | number) => {
     setLoading(true);
     try {
@@ -66,7 +67,6 @@ export default function CourseListPage() {
     setLoading(false);
   };
 
-  // Sửa khóa học – mở modal với dữ liệu của khoá học
   const handleEdit = (maKhoaHoc: string | number) => {
     const courseToEdit = courses.find(
       (course) => course.maKhoaHoc === maKhoaHoc
@@ -77,7 +77,11 @@ export default function CourseListPage() {
     }
   };
 
-  // Tìm kiếm cục bộ
+  const handleManageEnrollment = (maKhoaHoc: string | number) => {
+    setSelectedCourseEnrollment(String(maKhoaHoc));
+    setEnrollmentModalVisible(true);
+  };
+
   const handleSearch = (value: string) => {
     setSearchText(value);
     const trimmed = value.trim();
@@ -96,7 +100,6 @@ export default function CourseListPage() {
   return (
     <>
       <div>
-        {/* Thanh công cụ */}
         <Space style={{ marginBottom: 16 }}>
           <Button
             type="primary"
@@ -107,22 +110,27 @@ export default function CourseListPage() {
           <CourseSearch searchText={searchText} onSearch={handleSearch} />
         </Space>
 
-        {/* Bảng hiển thị */}
         <CourseTable
           courses={courses}
           loading={loading}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onManageEnrollment={handleManageEnrollment}
         />
       </div>
 
-      {/* Modal chỉnh sửa */}
       <EditCourseModal
         visible={isEditModalVisible}
         course={selectedCourse}
         onCancel={() => setEditModalVisible(false)}
         onUpdated={fetchCourses}
-      />  
+      />
+
+      <UserEnrollmentModal
+        visible={isEnrollmentModalVisible}
+        maKhoaHoc={selectedCourseEnrollment}
+        onCancel={() => setEnrollmentModalVisible(false)}
+      />
     </>
   );
 }
